@@ -51,6 +51,11 @@
                        Array.from(digitElement.parentElement?.children || []).indexOf(digitElement);
         const lastY = digitPositions.get(digitId) || 0;
         
+        // 如果位置沒有變化，跳過更新（減少不必要的 DOM 操作）
+        if (Math.abs(targetY - lastY) < 0.01) {
+            return;
+        }
+        
         if (immediate) {
             // 立即設置位置，無動畫
             wrapper.style.transition = 'none';
@@ -61,12 +66,15 @@
             // 計算距離，決定過渡時間（距離越遠，時間越長，但不要太長）
             const distance = Math.abs(targetY - lastY);
             // 使用較短的過渡時間，讓動畫更流暢
-            const transitionDuration = Math.min(100 + distance * 5, 200); // 100-200ms 之間
+            const transitionDuration = Math.min(80 + distance * 3, 150); // 80-150ms 之間，減少過渡時間
             
-            // 平滑滾動，使用更平滑的緩動函數
-            wrapper.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
-            wrapper.style.transform = `translateY(${targetY}rem)`;
-            digitPositions.set(digitId, targetY);
+            // 使用 requestAnimationFrame 確保平滑更新
+            requestAnimationFrame(() => {
+                // 平滑滾動，使用更平滑的緩動函數
+                wrapper.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                wrapper.style.transform = `translateY(${targetY}rem)`;
+                digitPositions.set(digitId, targetY);
+            });
         }
     }
     
@@ -239,29 +247,32 @@
                 currentSeconds !== lastTime.seconds;
             
             if (shouldUpdate) {
-                // 格式化當前時間
-                const currentDaysStr = currentDays.toString().padStart(3, '0');
-                const currentHoursStr = currentHours.toString().padStart(2, '0');
-                const currentMinutesStr = currentMinutes.toString().padStart(2, '0');
-                const currentSecondsStr = currentSeconds.toString().padStart(2, '0');
-                
-                // 更新顯示
-                const currentTime = {
-                    daysStr: currentDaysStr,
-                    hoursStr: currentHoursStr,
-                    minutesStr: currentMinutesStr,
-                    secondsStr: currentSecondsStr
-                };
-                
-                updateDigitsToTime(currentTime, false);
-                
-                // 更新記錄
-                lastTime = {
-                    days: currentDays,
-                    hours: currentHours,
-                    minutes: currentMinutes,
-                    seconds: currentSeconds
-                };
+                // 使用 requestAnimationFrame 批量更新，減少重排
+                requestAnimationFrame(() => {
+                    // 格式化當前時間
+                    const currentDaysStr = currentDays.toString().padStart(3, '0');
+                    const currentHoursStr = currentHours.toString().padStart(2, '0');
+                    const currentMinutesStr = currentMinutes.toString().padStart(2, '0');
+                    const currentSecondsStr = currentSeconds.toString().padStart(2, '0');
+                    
+                    // 更新顯示
+                    const currentTime = {
+                        daysStr: currentDaysStr,
+                        hoursStr: currentHoursStr,
+                        minutesStr: currentMinutesStr,
+                        secondsStr: currentSecondsStr
+                    };
+                    
+                    updateDigitsToTime(currentTime, false);
+                    
+                    // 更新記錄
+                    lastTime = {
+                        days: currentDays,
+                        hours: currentHours,
+                        minutes: currentMinutes,
+                        seconds: currentSeconds
+                    };
+                });
             }
             
             if (progress < 1) {
@@ -318,24 +329,57 @@
         // 實際圖片：001-017, 019, 020-029 = 28張
         const totalImages = 29; // 更新為29，包含 shadow019.png
         
-        // 預載入所有圖片
-        const images = [];
-        for (let i = 1; i <= totalImages; i++) {
-            const img = new Image();
-            // 嘗試 .png，如果不存在則使用 .jpg
-            const indexStr = String(i).padStart(3, '0');
-            // 先嘗試 .png
-            img.src = `intro_png/shadow${indexStr}.png`;
-            img.onerror = function() {
-                // 如果 .png 不存在，嘗試 .jpg
-                this.src = `intro_png/shadow${indexStr}.jpg`;
-            };
-            images.push(img);
+        // 預載入所有圖片並確定實際路徑（避免切換時的延遲）
+        const imagePaths = [];
+        let loadedCount = 0;
+        
+        function preloadImage(index) {
+            return new Promise((resolve) => {
+                const indexStr = String(index).padStart(3, '0');
+                const img = new Image();
+                
+                // 先嘗試 .png
+                img.onload = function() {
+                    imagePaths[index - 1] = `intro_png/shadow${indexStr}.png`;
+                    loadedCount++;
+                    resolve();
+                };
+                
+                img.onerror = function() {
+                    // 如果 .png 不存在，嘗試 .jpg
+                    img.onerror = null; // 清除錯誤處理器
+                    img.src = `intro_png/shadow${indexStr}.jpg`;
+                    img.onload = function() {
+                        imagePaths[index - 1] = `intro_png/shadow${indexStr}.jpg`;
+                        loadedCount++;
+                        resolve();
+                    };
+                    img.onerror = function() {
+                        // 如果兩種格式都不存在，使用 .png 作為默認（讓瀏覽器處理404）
+                        imagePaths[index - 1] = `intro_png/shadow${indexStr}.png`;
+                        loadedCount++;
+                        resolve();
+                    };
+                };
+                
+                img.src = `intro_png/shadow${indexStr}.png`;
+            });
         }
         
-        // 預載入第一張圖片（優先嘗試 .png）
-        const firstImagePath = getImagePath(1);
-        backgroundEl.style.backgroundImage = `url('${firstImagePath}')`;
+        // 並行預載入所有圖片（包括第一張）
+        const preloadPromises = [];
+        for (let i = 1; i <= totalImages; i++) {
+            preloadPromises.push(preloadImage(i));
+        }
+        
+        // 等待第一張圖片載入完成後立即顯示
+        preloadImage(1).then(() => {
+            if (imagePaths[0]) {
+                backgroundEl.style.backgroundImage = `url('${imagePaths[0]}')`;
+                // 更新標題背景
+                updateTitleBackground();
+            }
+        });
         
         // 計算每張圖片的間隔時間（從短到長，配合計時器從快到慢）
         // 使用指數函數，讓間隔從非常短逐漸增加到很長
@@ -377,20 +421,16 @@
                 return;
             }
             
-            // 獲取圖片路徑（優先 .png，如果不存在則使用 .jpg）
-            const indexStr = String(index).padStart(3, '0');
-            let imagePath = `intro_png/shadow${indexStr}.png`;
-            
-            // 檢查圖片是否存在，如果不存在則使用 .jpg
-            const img = new Image();
-            img.onload = function() {
-                backgroundEl.style.backgroundImage = `url('${imagePath}')`;
-            };
-            img.onerror = function() {
-                imagePath = `intro_png/shadow${indexStr}.jpg`;
-                backgroundEl.style.backgroundImage = `url('${imagePath}')`;
-            };
-            img.src = imagePath;
+            // 直接使用預載入的圖片路徑，無需再次檢查（減少延遲）
+            const imagePath = imagePaths[index - 1];
+            if (imagePath) {
+                // 使用 requestAnimationFrame 確保平滑切換
+                requestAnimationFrame(() => {
+                    backgroundEl.style.backgroundImage = `url('${imagePath}')`;
+                    // 更新標題背景（只在圖片切換時更新，減少頻繁操作）
+                    updateTitleBackground();
+                });
+            }
             
             // 直接切換，無過渡效果（類似翻書）
             backgroundEl.style.transition = 'none';
@@ -403,13 +443,15 @@
             }, nextInterval);
         }
         
-        // 開始翻頁（第一張已經顯示，從第二張開始）
+        // 等待第一張圖片載入完成後開始翻頁
         // 同時啟動計時器動畫，確保兩者同步
-        setTimeout(() => {
-            flipNextImage(2);
-            // 同時啟動計時器動畫
-            startAcceleratedTimer();
-        }, intervals[0] || minInterval);
+        preloadImage(1).then(() => {
+            setTimeout(() => {
+                flipNextImage(2);
+                // 同時啟動計時器動畫
+                startAcceleratedTimer();
+            }, intervals[0] || minInterval);
+        });
         
         // 返回總時間，供外部使用
         return totalFlipTime;
@@ -438,17 +480,14 @@
         // 立即開始圖片翻頁動畫（計時器會在圖片翻頁開始時同步啟動）
         const totalFlipTime = startImageFlipAnimation();
         
-        // 定期更新文字背景（讓文字顯示背景圖片）
-        const updateInterval = setInterval(() => {
-            updateTitleBackground();
-        }, 50); // 每50ms更新一次，確保背景圖片同步
+        // 不再定期更新文字背景，改為在圖片切換時更新（減少頻繁操作）
+        // 圖片切換時會在 flipNextImage 中調用 updateTitleBackground()
         
         // 計算總動畫時間（圖片翻頁時間 + 額外緩衝時間）
         const totalAnimationTime = totalFlipTime + 1000; // 圖片翻頁時間 + 1秒緩衝
         
-        // 動畫完成後停止更新並跳轉
+        // 動畫完成後跳轉
         setTimeout(() => {
-            clearInterval(updateInterval);
             // 動畫完成後跳轉到主頁面
             redirectToIndex();
         }, totalAnimationTime);
