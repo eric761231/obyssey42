@@ -302,24 +302,40 @@
         }, 1000);
     }
     
+    // 獲取圖片路徑（支持 .jpg 和 .png）
+    function getImagePath(index) {
+        const indexStr = String(index).padStart(3, '0');
+        // 先嘗試 .png，如果不存在則使用 .jpg
+        return `intro_png/shadow${indexStr}.png`;
+    }
+    
     // 圖片快速翻頁動畫（類似漫威開場，從快到慢，配合計時器）
     function startImageFlipAnimation() {
         const backgroundEl = document.getElementById('introBackground');
         if (!backgroundEl) return;
         
-        // 圖片總數
-        const totalImages = 27;
+        // 圖片總數（根據實際圖片數量調整，目前有 shadow001 到 shadow029，但缺少 shadow018）
+        // 實際圖片：001-017, 019, 020-029 = 28張
+        const totalImages = 29; // 更新為29，包含 shadow019.png
         
         // 預載入所有圖片
         const images = [];
         for (let i = 1; i <= totalImages; i++) {
             const img = new Image();
-            img.src = `intro_png/shadow${String(i).padStart(3, '0')}.jpg`;
+            // 嘗試 .png，如果不存在則使用 .jpg
+            const indexStr = String(i).padStart(3, '0');
+            // 先嘗試 .png
+            img.src = `intro_png/shadow${indexStr}.png`;
+            img.onerror = function() {
+                // 如果 .png 不存在，嘗試 .jpg
+                this.src = `intro_png/shadow${indexStr}.jpg`;
+            };
             images.push(img);
         }
         
-        // 預載入第一張圖片
-        backgroundEl.style.backgroundImage = `url('intro_png/shadow001.jpg')`;
+        // 預載入第一張圖片（優先嘗試 .png）
+        const firstImagePath = getImagePath(1);
+        backgroundEl.style.backgroundImage = `url('${firstImagePath}')`;
         
         // 計算每張圖片的間隔時間（從短到長，配合計時器從快到慢）
         // 使用指數函數，讓間隔從非常短逐漸增加到很長
@@ -361,10 +377,23 @@
                 return;
             }
             
-            const imagePath = `intro_png/shadow${String(index).padStart(3, '0')}.jpg`;
+            // 獲取圖片路徑（優先 .png，如果不存在則使用 .jpg）
+            const indexStr = String(index).padStart(3, '0');
+            let imagePath = `intro_png/shadow${indexStr}.png`;
+            
+            // 檢查圖片是否存在，如果不存在則使用 .jpg
+            const img = new Image();
+            img.onload = function() {
+                backgroundEl.style.backgroundImage = `url('${imagePath}')`;
+            };
+            img.onerror = function() {
+                imagePath = `intro_png/shadow${indexStr}.jpg`;
+                backgroundEl.style.backgroundImage = `url('${imagePath}')`;
+            };
+            img.src = imagePath;
+            
             // 直接切換，無過渡效果（類似翻書）
             backgroundEl.style.transition = 'none';
-            backgroundEl.style.backgroundImage = `url('${imagePath}')`;
             
             // 計算下一張圖片的延遲時間（從短到長）
             const nextInterval = intervals[index - 1] || minInterval;
