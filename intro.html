@@ -26,7 +26,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            background-size: cover;
+            background-size: 70%;
             background-position: center;
             background-repeat: no-repeat;
             opacity: 1;
@@ -41,7 +41,7 @@
             height: 100%;
             z-index: 0;
             background-image: url('images/hero-background.jpg');
-            background-size: cover;
+            background-size: 70%;
             background-position: center;
             background-repeat: no-repeat;
             opacity: 0;
@@ -141,13 +141,117 @@
 
         @media (max-width: 768px) {
             .intro-title-large {
-                font-size: 5rem;
+                font-size: 4rem;
+                margin-top: -3rem;
+                margin-bottom: 2rem;
+                letter-spacing: 0.1em;
+            }
+
+            .intro-content {
+                padding: 0 15px;
+            }
+
+            .timer-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .timer-number {
+                font-size: 1.8rem;
+            }
+
+            .timer-item {
+                min-width: 55px;
+            }
+
+            .timer-separator {
+                font-size: 1.3rem;
+            }
+
+            .timer-label {
+                font-size: 0.85rem;
+            }
+
+            .slot-machine {
+                font-size: 1.8rem;
+                height: 2.5rem;
+            }
+
+            .slot-digit {
+                height: 2.5rem;
+            }
+
+            .slot-digit .digit-item {
+                height: 2.5rem;
+                line-height: 2.5rem;
+            }
+
+            .intro-background,
+            .intro-background-final {
+                background-size: 80%;
             }
         }
 
         @media (max-width: 480px) {
             .intro-title-large {
-                font-size: 3.5rem;
+                font-size: 2.5rem;
+                margin-top: -2rem;
+                margin-bottom: 1.5rem;
+                letter-spacing: 0.05em;
+            }
+
+            .intro-content {
+                padding: 0 10px;
+            }
+
+            .timer-container {
+                padding: 1rem 0.8rem;
+            }
+
+            .timer-display {
+                gap: 0.3rem;
+                flex-wrap: wrap;
+            }
+
+            .timer-number {
+                font-size: 1.5rem;
+            }
+
+            .timer-item {
+                min-width: 45px;
+            }
+
+            .timer-unit {
+                font-size: 0.7rem;
+            }
+
+            .timer-separator {
+                font-size: 1rem;
+                margin: 0 0.05rem;
+            }
+
+            .timer-label {
+                font-size: 0.75rem;
+                padding: 0 10px;
+            }
+
+            .slot-machine {
+                font-size: 1.5rem;
+                height: 2rem;
+            }
+
+            .slot-digit {
+                height: 2rem;
+                width: 1em;
+            }
+
+            .slot-digit .digit-item {
+                height: 2rem;
+                line-height: 2rem;
+            }
+
+            .intro-background,
+            .intro-background-final {
+                background-size: 90%;
             }
         }
     </style>
