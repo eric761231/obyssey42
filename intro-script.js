@@ -26,6 +26,9 @@
         digitElement.appendChild(wrapper);
     }
     
+    // 記錄每個數字位的最後位置，用於平滑過渡
+    const digitPositions = new Map();
+    
     // 滾動單個數字位到目標數字（平滑滾動）
     function rollDigitToPosition(digitElement, targetDigit, immediate = false) {
         if (!digitElement) return;
@@ -42,15 +45,28 @@
         const basePosition = safeTargetDigit * digitHeight;
         const targetY = -basePosition;
         
+        // 獲取上次的位置
+        const digitId = digitElement.getAttribute('data-position') || 
+                       (digitElement.parentElement?.id || '') + '-' + 
+                       Array.from(digitElement.parentElement?.children || []).indexOf(digitElement);
+        const lastY = digitPositions.get(digitId) || 0;
+        
         if (immediate) {
             // 立即設置位置，無動畫
             wrapper.style.transition = 'none';
             wrapper.style.transform = `translateY(${targetY}rem)`;
             void wrapper.offsetHeight; // 強制重排
+            digitPositions.set(digitId, targetY);
         } else {
-            // 平滑滾動
-            wrapper.style.transition = 'transform 0.1s ease-out';
+            // 計算距離，決定過渡時間（距離越遠，時間越長，但不要太長）
+            const distance = Math.abs(targetY - lastY);
+            // 使用較短的過渡時間，讓動畫更流暢
+            const transitionDuration = Math.min(100 + distance * 5, 200); // 100-200ms 之間
+            
+            // 平滑滾動，使用更平滑的緩動函數
+            wrapper.style.transition = `transform ${transitionDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
             wrapper.style.transform = `translateY(${targetY}rem)`;
+            digitPositions.set(digitId, targetY);
         }
     }
     
@@ -184,6 +200,14 @@
             return 1 - Math.pow(1 - t, 6);
         }
         
+        // 記錄上一次的時間值，用於平滑過渡
+        let lastTime = {
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+        };
+        
         function updateAnimation() {
             const now = Date.now();
             const elapsed = now - startTime;
@@ -207,28 +231,58 @@
             const currentMinutes = Math.floor(remainingAfterHours / oneMinute);
             const currentSeconds = Math.floor((remainingAfterHours % oneMinute) / 1000);
             
-            // 格式化當前時間
-            const currentDaysStr = currentDays.toString().padStart(3, '0');
-            const currentHoursStr = currentHours.toString().padStart(2, '0');
-            const currentMinutesStr = currentMinutes.toString().padStart(2, '0');
-            const currentSecondsStr = currentSeconds.toString().padStart(2, '0');
+            // 只在數字變化時更新，避免不必要的重繪
+            const shouldUpdate = 
+                currentDays !== lastTime.days ||
+                currentHours !== lastTime.hours ||
+                currentMinutes !== lastTime.minutes ||
+                currentSeconds !== lastTime.seconds;
             
-            // 更新顯示
-            const currentTime = {
-                daysStr: currentDaysStr,
-                hoursStr: currentHoursStr,
-                minutesStr: currentMinutesStr,
-                secondsStr: currentSecondsStr
-            };
-            
-            updateDigitsToTime(currentTime, false);
+            if (shouldUpdate) {
+                // 格式化當前時間
+                const currentDaysStr = currentDays.toString().padStart(3, '0');
+                const currentHoursStr = currentHours.toString().padStart(2, '0');
+                const currentMinutesStr = currentMinutes.toString().padStart(2, '0');
+                const currentSecondsStr = currentSeconds.toString().padStart(2, '0');
+                
+                // 更新顯示
+                const currentTime = {
+                    daysStr: currentDaysStr,
+                    hoursStr: currentHoursStr,
+                    minutesStr: currentMinutesStr,
+                    secondsStr: currentSecondsStr
+                };
+                
+                updateDigitsToTime(currentTime, false);
+                
+                // 更新記錄
+                lastTime = {
+                    days: currentDays,
+                    hours: currentHours,
+                    minutes: currentMinutes,
+                    seconds: currentSeconds
+                };
+            }
             
             if (progress < 1) {
                 requestAnimationFrame(updateAnimation);
             } else {
-                // 動畫結束，確保停在當前實際時間（避免閃爍）
+                // 動畫結束，重新計算當前實際時間並更新（確保與 index.html 一致）
                 const finalTime = calculateTime();
-                updateDigitsToTime(finalTime, true);
+                // 確保使用與 timer-script.js 相同的計算邏輯
+                const finalDaysStr = finalTime.days.toString().padStart(3, '0');
+                const finalHoursStr = finalTime.hours.toString().padStart(2, '0');
+                const finalMinutesStr = finalTime.minutes.toString().padStart(2, '0');
+                const finalSecondsStr = finalTime.seconds.toString().padStart(2, '0');
+                
+                const finalTimeFormatted = {
+                    daysStr: finalDaysStr,
+                    hoursStr: finalHoursStr,
+                    minutesStr: finalMinutesStr,
+                    secondsStr: finalSecondsStr
+                };
+                
+                updateDigitsToTime(finalTimeFormatted, true);
             }
         }
         
