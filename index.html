@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>溯42畢業紀念</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">溯42</div>
+            <ul class="nav-menu">
+                <li><a href="#home">首頁</a></li>
+                <li><a href="#journey">我們的旅程</a></li>
+                <li><a href="#gallery">畢業同學</a></li>
+                <li><a href="#memories">畢業感言</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主視覺區域 -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">溯42</h1>
+            <div class="hero-description">
+                <p>溯源畢業才是人生溯源的開始</p>
+                <p class="hero-quote">一段深具影響力的旅程，我們一起走過</p>
+            </div>
+            <!-- 時間計時器 -->
+            <div class="timer-container">
+                <p class="timer-label">課程從 2025/04/17 至今已經過了</p>
+                <div class="timer-display" id="timerDisplay">
+                    <div class="timer-item">
+                        <span class="timer-number" id="days">0</span>
+                        <span class="timer-unit">天</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-item">
+                        <span class="timer-number" id="hours">0</span>
+                        <span class="timer-unit">時</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-item">
+                        <span class="timer-number" id="minutes">0</span>
+                        <span class="timer-unit">分</span>
+                    </div>
+                    <div class="timer-separator">:</div>
+                    <div class="timer-item">
+                        <span class="timer-number" id="seconds">0</span>
+                        <span class="timer-unit">秒</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>向下滾動</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- 我們的旅程 -->
+    <section id="journey" class="about-section">
+        <div class="container">
+            <h2 class="section-title">我們的旅程</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead-text">
+                        溯源是一個整合型的深度工作坊，這是一個為期六個月的探索、蛻變之旅。我們一起培養與身、心、靈互動的和諧與平和，體驗接受每一個當下，放下抗拒，創造深遠而持久的轉換。
+                    </p>
+                    <p>
+                        我們著眼於內在，讓身體、情緒、思維達到平衡、和諧與合一。這不僅僅是一個課程，更是一段珍貴的成長歷程。
+                    </p>
+                </div>
+                <div class="about-features">
+                    <div class="feature-item">
+                        <h3>一個旅程而非一個目的地</h3>
+                        <p>我們一起追本溯源，更全方位地檢視關於信念和情緒的全貌。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>與生命之流共同運轉</h3>
+                        <p>我們學習如何轉化、活在當下，並接受各個面向的自己。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>探索古代戰士之道</h3>
+                        <p>我們解開了許多枷鎖，為自己創造了嶄新的人生！</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>接受事務的原貌</h3>
+                        <p>我們體驗接受每一個當下，放下抗拒，創造深遠而持久的轉換。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 畢業同學相框區域 -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="section-title">畢業同學</h2>
+            <p class="section-subtitle">第42班 · 21位勇敢的探索者</p>
+            <div class="photo-grid" id="photoGrid">
+                <!-- 21個相框將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 畢業感言 -->
+    <section id="memories" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">畢業感言</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>感謝這段美好的旅程</h3>
+                    <p class="memories-text">
+                        六個月的時光轉瞬即逝，但我們收穫的成長與轉變將伴隨我們一生。
+                        感謝每一位同學的陪伴與支持，讓我們在溯源的路上不再孤單。
+                    </p>
+                    <p class="memories-text">
+                        這不是結束，而是新的開始。願我們帶著這份內在的平和與力量，
+                        繼續在人生的道路上勇敢前行，活出最真實的自己。
+                    </p>
+                    <div class="graduation-badge">
+                        <p class="badge-text">溯42</p>
+                        <p class="badge-subtext">陰陽合一，醒覺於萬物</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 溯42畢業紀念網站. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 圖片預覽模態框 -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div id="caption"></div>
+    </div>
+
+    <script src="timer-script.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
