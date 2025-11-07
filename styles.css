@@ -20,6 +20,13 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     overflow-x: hidden;
+    /* 移動端優化：改善觸摸滾動性能 */
+    -webkit-overflow-scrolling: touch;
+    /* 移動端優化：防止文字選擇時的藍色高亮 */
+    -webkit-tap-highlight-color: transparent;
+    /* 移動端優化：改善字體渲染 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -34,7 +41,13 @@ body {
     top: 0;
     width: 100%;
     background: rgba(255, 255, 255, 0.95);
+    /* 添加 webkit 前綴以支持更多移動瀏覽器 */
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+    /* 降級方案：如果 backdrop-filter 不支持，使用更不透明的背景 */
+    @supports not (backdrop-filter: blur(10px)) {
+        background: rgba(255, 255, 255, 0.98);
+    }
     box-shadow: var(--shadow);
     z-index: 1000;
     transition: all 0.3s ease;
@@ -179,7 +192,13 @@ body {
     font-weight: 600;
     letter-spacing: 1px;
     margin-bottom: 1.5rem;
+    /* 添加 webkit 前綴以支持更多移動瀏覽器 */
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+    /* 降級方案：如果 backdrop-filter 不支持，使用更不透明的背景 */
+    @supports not (backdrop-filter: blur(10px)) {
+        background: rgba(255, 255, 255, 0.3);
+    }
 }
 
 /* 時間計時器 */
@@ -262,9 +281,7 @@ body {
 }
 
 /* 移除CSS中的transition，完全由JavaScript控制 */
-.slot-digit.rolling .digit-wrapper {
-    /* transition 完全由 JavaScript 動態設置 */
-}
+/* .slot-digit.rolling .digit-wrapper 的 transition 完全由 JavaScript 動態設置 */
 
 .timer-unit {
     font-size: 0.9rem;
