@@ -325,9 +325,9 @@
         const backgroundEl = document.getElementById('introBackground');
         if (!backgroundEl) return;
         
-        // 圖片總數（根據實際圖片數量調整，目前有 shadow001 到 shadow034，共34張）
-        // 實際圖片：001-034 = 34張（包含 shadow018）
-        const totalImages = 34; // 更新為34，包含 shadow001-034
+        // 圖片總數（根據實際圖片數量調整，目前有 shadow001 到 shadow035，共35張）
+        // 實際圖片：001-035 = 35張（包含 shadow018）
+        const totalImages = 35; // 更新為35，包含 shadow001-035
         
         // 預載入所有圖片並確定實際路徑（避免切換時的延遲）
         const imagePaths = [];
