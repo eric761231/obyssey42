@@ -1,38 +1,56 @@
-// 創建21個相框
+// 21位同學的名稱列表（可根據實際情況修改）
+const studentNames = [
+    '同學1', '同學2', '同學3', '同學4', '同學5',
+    '同學6', '同學7', '同學8', '同學9', '同學10',
+    '同學11', '同學12', '同學13', '同學14', '同學15',
+    '同學16', '同學17', '同學18', '同學19', '同學20',
+    '同學21'
+];
+
+// 21位同學對應的圖片編號（可根據實際情況修改）
+// 例如：[1, 2, 3, 4, 5, ...] 表示使用 shadow001.jpg, shadow002.jpg 等
+const studentImageIndices = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+];
+
+// 創建21個相框（使用懶加載）
 function createPhotoFrames() {
     const photoGrid = document.getElementById('photoGrid');
     const totalFrames = 21;
 
-    for (let i = 1; i <= totalFrames; i++) {
+    for (let i = 0; i < totalFrames; i++) {
         const frame = document.createElement('div');
         frame.className = 'photo-frame';
-        frame.setAttribute('data-index', i);
+        frame.setAttribute('data-index', i + 1);
 
-        // 創建圖片元素
+        // 創建圖片元素（使用懶加載）
         const img = document.createElement('img');
-        // 使用 intro_png 資料夾中的圖片
-        img.src = `intro_png/shadow${String(i).padStart(3, '0')}.jpg`;
-        img.alt = `畢業同學 ${i}`;
+        // 使用 data-src 進行懶加載，提升頁面載入性能
+        const imageIndex = studentImageIndices[i];
+        img.dataset.src = `intro_png/shadow${String(imageIndex).padStart(3, '0')}.jpg`;
+        img.alt = studentNames[i] || `畢業同學 ${i + 1}`;
         img.onerror = function() {
             // 如果圖片不存在，顯示佔位符
             this.style.display = 'none';
             const placeholder = document.createElement('div');
             placeholder.className = 'photo-placeholder';
-            placeholder.textContent = i;
+            placeholder.textContent = i + 1;
             frame.appendChild(placeholder);
         };
 
         // 創建標籤
         const label = document.createElement('div');
         label.className = 'photo-label';
-        label.textContent = `畢業同學 ${i}`;
+        label.textContent = studentNames[i] || `畢業同學 ${i + 1}`;
 
         frame.appendChild(img);
         frame.appendChild(label);
 
         // 點擊事件 - 打開模態框
         frame.addEventListener('click', function() {
-            openModal(img.src, label.textContent);
+            const imageSrc = img.src || img.dataset.src;
+            openModal(imageSrc, label.textContent);
         });
 
         photoGrid.appendChild(frame);
@@ -120,27 +138,46 @@ document.addEventListener('DOMContentLoaded', function() {
     createPhotoFrames();
     initSmoothScroll();
     initNavbarScroll();
+    // 啟用圖片懶加載
+    initLazyLoading();
 });
 
-// 圖片懶加載（可選優化）
+// 圖片懶加載（優化性能，只載入可見區域的圖片）
 function initLazyLoading() {
     const images = document.querySelectorAll('.photo-frame img');
     
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
+    // 如果瀏覽器支持 IntersectionObserver，使用它進行懶加載
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        // 載入圖片
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img);
                 }
-                observer.unobserve(img);
+            });
+        }, {
+            // 提前開始載入（當圖片距離視窗 100px 時）
+            rootMargin: '100px'
+        });
+
+        images.forEach(img => {
+            if (img.dataset.src) {
+                imageObserver.observe(img);
             }
         });
-    });
-
-    images.forEach(img => {
-        imageObserver.observe(img);
-    });
+    } else {
+        // 不支持的瀏覽器，直接載入所有圖片
+        images.forEach(img => {
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            }
+        });
+    }
 }
 
