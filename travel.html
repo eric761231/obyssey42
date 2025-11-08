@@ -8,6 +8,28 @@
     <meta http-equiv="Expires" content="0">
     <title>溯42畢業紀念 - 旅行行程</title>
     <link rel="stylesheet" href="styles.css?v=2.0">
+    <!-- 本地手寫字體 -->
+    <style>
+        /* 本地字型定義 - 使用 ChenYuluoyan-Thin-Monospaced 字型 */
+        @font-face {
+            font-family: 'Handwriting';
+            src: url('fonts/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Handwriting';
+            src: url('fonts/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* 備用：如果本地字型載入失敗，使用 Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Caveat:wght@400;700&display=swap');
+    </style>
     <style>
         .travel-hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -38,15 +60,20 @@
         }
 
         .travel-hero h1 {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             margin-bottom: 1rem;
-            font-weight: 900;
+            font-weight: 400;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', cursive;
+            letter-spacing: 0.15em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .travel-hero .travel-date {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             opacity: 0.9;
             margin-bottom: 2rem;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', cursive;
+            font-weight: 400;
         }
 
         .travel-container {
@@ -68,13 +95,18 @@
         }
 
         .day-header h2 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 0.5rem;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', cursive;
+            font-weight: 400;
+            letter-spacing: 0.1em;
         }
 
         .day-header .day-number {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             opacity: 0.9;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', cursive;
+            font-weight: 400;
         }
 
         .timeline {
@@ -88,7 +120,7 @@
             display: flex;
             margin-bottom: 40px;
             position: relative;
-            padding-left: 80px;
+            padding-left: 100px;
         }
 
         .timeline-item:last-child {
@@ -98,11 +130,12 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: 20px;
-            top: 0;
+            left: 35px;
+            top: 35px;
             bottom: -40px;
             width: 3px;
             background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            z-index: 1;
         }
 
         .timeline-item:last-child::before {
@@ -113,10 +146,33 @@
             position: absolute;
             left: 0;
             top: 0;
-            font-weight: 700;
-            color: #667eea;
-            font-size: 1.1rem;
-            min-width: 70px;
+            font-weight: 400;
+            color: var(--white);
+            font-size: 1.3rem;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            text-align: center;
+            line-height: 1.4;
+            font-family: 'Handwriting', 'Caveat', 'Kalam', cursive;
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-time::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            z-index: -1;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
 
         .timeline-content {
@@ -124,21 +180,32 @@
         }
 
         .timeline-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 0.5rem;
             color: var(--primary-color);
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', 'Kalam', cursive;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            /* 模擬手寫效果 */
+            text-shadow: 0.5px 0.5px 0px rgba(0, 0, 0, 0.1);
         }
 
         .timeline-content p {
             color: var(--text-color);
             line-height: 1.8;
             margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', 'Kalam', cursive;
+            font-weight: 400;
+            letter-spacing: 0.02em;
         }
 
         .timeline-content .note {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #999;
             font-style: italic;
+            font-family: 'Handwriting', 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', 'Kalam', cursive;
+            font-weight: 300;
         }
 
         .timeline-images {
@@ -190,38 +257,148 @@
         }
 
         @media (max-width: 768px) {
+            .travel-hero {
+                padding: 100px 15px 60px;
+            }
+
             .travel-hero h1 {
-                font-size: 2.5rem;
+                font-size: 3rem;
+            }
+
+            .travel-hero .travel-date {
+                font-size: 1.4rem;
+            }
+
+            .travel-container {
+                padding: 40px 15px;
+            }
+
+            .day-header {
+                padding: 25px 20px;
+            }
+
+            .day-header h2 {
+                font-size: 2.2rem;
+            }
+
+            .day-header .day-number {
+                font-size: 1.3rem;
+            }
+
+            .timeline {
+                padding: 25px 15px;
+            }
+
+            .timeline-item {
+                padding-left: 85px;
+                margin-bottom: 35px;
+            }
+
+            .timeline-item::before {
+                left: 32px;
+                top: 30px;
+            }
+
+            .timeline-time {
+                font-size: 1.1rem;
+                width: 65px;
+                height: 65px;
+            }
+
+            .timeline-time::before {
+                width: 65px;
+                height: 65px;
+            }
+
+            .timeline-content h3 {
+                font-size: 1.5rem;
+            }
+
+            .timeline-content p {
+                font-size: 1rem;
+            }
+
+            .timeline-content .note {
+                font-size: 0.95rem;
+            }
+
+            .timeline-images {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .travel-hero {
+                padding: 80px 10px 50px;
+            }
+
+            .travel-hero h1 {
+                font-size: 2.2rem;
+                letter-spacing: 0.1em;
             }
 
             .travel-hero .travel-date {
                 font-size: 1.2rem;
             }
 
+            .travel-container {
+                padding: 30px 10px;
+            }
+
+            .day-header {
+                padding: 20px 15px;
+            }
+
             .day-header h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .day-header .day-number {
+                font-size: 1.1rem;
             }
 
             .timeline {
-                padding: 20px;
+                padding: 20px 10px;
             }
 
             .timeline-item {
-                padding-left: 60px;
+                padding-left: 75px;
                 margin-bottom: 30px;
             }
 
+            .timeline-item::before {
+                left: 27px;
+                top: 25px;
+            }
+
             .timeline-time {
-                font-size: 0.9rem;
-                min-width: 50px;
+                font-size: 1rem;
+                width: 55px;
+                height: 55px;
+            }
+
+            .timeline-time::before {
+                width: 55px;
+                height: 55px;
             }
 
             .timeline-content h3 {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
             }
 
-            .timeline-images {
-                grid-template-columns: 1fr;
+            .timeline-content p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+            }
+
+            .timeline-content .note {
+                font-size: 0.9rem;
+            }
+
+            .back-button {
+                padding: 10px 25px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -272,10 +449,10 @@
                         <p>午餐時間，享受全原木建築的獨特氛圍</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel001.jpg" alt="佐一茶屋" loading="lazy">
+                                <img data-src="travel/travel001.jpg" alt="佐一茶屋">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel002.jpg" alt="佐一茶屋" loading="lazy">
+                                <img data-src="travel/travel002.jpg" alt="佐一茶屋">
                             </div>
                         </div>
                     </div>
@@ -288,10 +465,10 @@
                         <p>探索台灣版的合掌村，體驗獨特的建築風格</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel003.jpg" alt="得恩亞納" loading="lazy">
+                                <img data-src="travel/travel003.jpg" alt="得恩亞納">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel004.jpg" alt="得恩亞納" loading="lazy">
+                                <img data-src="travel/travel004.jpg" alt="得恩亞納">
                             </div>
                         </div>
                     </div>
@@ -305,10 +482,10 @@
                         <p class="note">看雲海、夕陽（不一定有）</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel005.jpg" alt="夢蝶民宿" loading="lazy">
+                                <img data-src="travel/travel005.jpg" alt="夢蝶民宿">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel006.jpg" alt="夢蝶民宿" loading="lazy">
+                                <img data-src="travel/travel006.jpg" alt="夢蝶民宿">
                             </div>
                         </div>
                     </div>
@@ -321,7 +498,7 @@
                         <p>享受溫暖的晚餐時光</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel007.jpg" alt="火鍋" loading="lazy">
+                                <img data-src="travel/travel007.jpg" alt="火鍋">
                             </div>
                         </div>
                     </div>
@@ -334,10 +511,10 @@
                         <p class="note">（不一定有）</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel008.jpg" alt="星空" loading="lazy">
+                                <img data-src="travel/travel008.jpg" alt="星空">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel009.jpg" alt="琉璃光" loading="lazy">
+                                <img data-src="travel/travel009.jpg" alt="琉璃光">
                             </div>
                         </div>
                     </div>
@@ -351,10 +528,10 @@
                         <p>相濡以沫閱讀 - 討論</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel010.jpg" alt="瑜珈冥想" loading="lazy">
+                                <img data-src="travel/travel010.jpg" alt="瑜珈冥想">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel011.jpg" alt="閱讀討論" loading="lazy">
+                                <img data-src="travel/travel011.jpg" alt="閱讀討論">
                             </div>
                         </div>
                     </div>
@@ -376,7 +553,7 @@
                         <p class="note">（不一定有）</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel012.jpg" alt="日出" loading="lazy">
+                                <img data-src="travel/travel012.jpg" alt="日出">
                             </div>
                         </div>
                     </div>
@@ -389,7 +566,7 @@
                         <p>享受民宿準備的豐盛早餐</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel013.jpg" alt="早餐" loading="lazy">
+                                <img data-src="travel/travel013.jpg" alt="早餐">
                             </div>
                         </div>
                     </div>
@@ -402,10 +579,10 @@
                         <p>欣賞美麗的櫻花盛開</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel014.jpg" alt="賞櫻" loading="lazy">
+                                <img data-src="travel/travel014.jpg" alt="賞櫻">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel015.jpg" alt="賞櫻" loading="lazy">
+                                <img data-src="travel/travel015.jpg" alt="賞櫻">
                             </div>
                         </div>
                     </div>
@@ -426,10 +603,10 @@
                         <p>午餐時間</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel016.jpg" alt="山之美風味館" loading="lazy">
+                                <img data-src="travel/travel016.jpg" alt="山之美風味館">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel017.jpg" alt="山之美風味館" loading="lazy">
+                                <img data-src="travel/travel017.jpg" alt="山之美風味館">
                             </div>
                         </div>
                     </div>
@@ -442,10 +619,10 @@
                         <p>參觀特色建築</p>
                         <div class="timeline-images">
                             <div class="timeline-image">
-                                <img src="travel/travel018.jpg" alt="歐樂沃築城堡" loading="lazy">
+                                <img data-src="travel/travel018.jpg" alt="歐樂沃築城堡">
                             </div>
                             <div class="timeline-image">
-                                <img src="travel/travel019.jpg" alt="歐樂沃築城堡" loading="lazy">
+                                <img data-src="travel/travel019.jpg" alt="歐樂沃築城堡">
                             </div>
                         </div>
                     </div>
@@ -475,37 +652,87 @@
     </footer>
 
     <script>
+        // 圖片懶加載功能（使用 IntersectionObserver）
+        function initTravelLazyLoading() {
+            const images = document.querySelectorAll('.timeline-image img[data-src]');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                // 載入圖片
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    // 提前開始載入（當圖片距離視窗 100px 時）
+                    rootMargin: '100px'
+                });
+
+                images.forEach(img => {
+                    if (img.dataset.src) {
+                        imageObserver.observe(img);
+                    }
+                });
+            } else {
+                // 不支持的瀏覽器，直接載入所有圖片
+                images.forEach(img => {
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                });
+            }
+        }
+
         // 圖片點擊放大功能
-        document.querySelectorAll('.timeline-image').forEach(image => {
-            image.addEventListener('click', function() {
-                const imgSrc = this.querySelector('img').src;
-                const modal = document.createElement('div');
-                modal.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.9);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 10000;
-                    cursor: pointer;
-                `;
-                const img = document.createElement('img');
-                img.src = imgSrc;
-                img.style.cssText = `
-                    max-width: 90%;
-                    max-height: 90%;
-                    object-fit: contain;
-                `;
-                modal.appendChild(img);
-                document.body.appendChild(modal);
-                modal.addEventListener('click', function() {
-                    document.body.removeChild(modal);
+        function initImageModal() {
+            document.querySelectorAll('.timeline-image').forEach(image => {
+                image.addEventListener('click', function() {
+                    const img = this.querySelector('img');
+                    // 確保圖片已載入（如果使用懶加載）
+                    const imgSrc = img.src || img.dataset.src;
+                    if (!imgSrc) return;
+                    
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.9);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 10000;
+                        cursor: pointer;
+                    `;
+                    const modalImg = document.createElement('img');
+                    modalImg.src = imgSrc;
+                    modalImg.style.cssText = `
+                        max-width: 90%;
+                        max-height: 90%;
+                        object-fit: contain;
+                    `;
+                    modal.appendChild(modalImg);
+                    document.body.appendChild(modal);
+                    modal.addEventListener('click', function() {
+                        document.body.removeChild(modal);
+                    });
                 });
             });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initTravelLazyLoading();
+            initImageModal();
         });
     </script>
 </body>
