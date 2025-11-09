@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 :root {
     --primary-color: #2c3e50;
     --secondary-color: #34495e;
@@ -20,6 +26,8 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
     /* 移動端優化：改善觸摸滾動性能 */
     -webkit-overflow-scrolling: touch;
     /* 移動端優化：防止文字選擇時的藍色高亮 */
@@ -144,7 +152,7 @@ body {
 
 .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 3; /* 確保在落葉之上 */
     max-width: 900px;
     padding: 0 20px;
 }
@@ -571,6 +579,29 @@ body {
     color: var(--white);
     text-align: center;
     padding: 2rem 0;
+    position: relative;
+    z-index: 2; /* 確保在堆積落葉之上 */
+    margin-bottom: 0 !important; /* 移除底部空白 */
+    padding-bottom: 2rem;
+}
+
+/* 確保頁尾容器沒有額外空白 */
+body > div:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* 確保 body 和 html 沒有底部空白 */
+html, body {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    height: auto;
+}
+
+/* 確保所有元素在頁尾後沒有空白 */
+footer.footer,
+footer.footer * {
+    margin-bottom: 0 !important;
 }
 
 /* 音樂播放器 */
@@ -1017,6 +1048,114 @@ body {
     .memories-text {
         font-size: 0.9rem;
         line-height: 1.6;
+    }
+}
+
+/* 秋天落葉飄落效果 */
+#falling-leaves-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2; /* 在背景之上，但在內容之下 */
+    overflow: hidden;
+}
+
+.falling-leaf {
+    position: absolute;
+    top: -50px;
+    transform-origin: center;
+    pointer-events: none;
+    /* 使用圖片作為落葉 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* 確保圖片顯示 */
+    display: block;
+    /* 動畫 - 合併所有 transform 效果到一個動畫中 */
+    animation: fallAndSwayAndRotate var(--fall-duration, 15s) linear infinite;
+    /* 陰影效果 */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    /* 調試用 - 暫時顯示邊框 */
+    /* border: 1px solid red; */
+}
+
+/* 合併的飄落、左右飄動和旋轉動畫 */
+@keyframes fallAndSwayAndRotate {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    10% {
+        transform: translateY(10vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(36deg);
+    }
+    20% {
+        transform: translateY(20vh) translateX(calc(var(--sway-amount, 30px) * -0.2)) rotate(72deg);
+    }
+    30% {
+        transform: translateY(30vh) translateX(calc(var(--sway-amount, 30px) * 0.4)) rotate(108deg);
+    }
+    40% {
+        transform: translateY(40vh) translateX(calc(var(--sway-amount, 30px) * -0.3)) rotate(144deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(calc(var(--sway-amount, 30px) * 0.2)) rotate(180deg);
+    }
+    60% {
+        transform: translateY(60vh) translateX(calc(var(--sway-amount, 30px) * -0.4)) rotate(216deg);
+    }
+    70% {
+        transform: translateY(70vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(252deg);
+    }
+    80% {
+        transform: translateY(80vh) translateX(calc(var(--sway-amount, 30px) * -0.2)) rotate(288deg);
+    }
+    90% {
+        transform: translateY(90vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(324deg);
+    }
+    100% {
+        transform: translateY(calc(100vh + 50px)) translateX(calc(var(--sway-amount, 30px) * 0.1)) rotate(360deg);
+    }
+}
+
+/* 堆積落葉效果 */
+#piled-leaves-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px; /* 增加堆積區域高度，形成厚厚一層 */
+    pointer-events: none;
+    z-index: 1; /* 在頁尾下方 */
+    overflow: visible; /* 允許落葉稍微超出容器 */
+}
+
+.piled-leaf {
+    position: absolute;
+    transform-origin: center;
+    pointer-events: none;
+    /* 使用圖片作為落葉 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .falling-leaf {
+        /* 移動端稍微減小落葉大小 */
+        transform: scale(0.8);
+    }
+    
+    #piled-leaves-container {
+        height: 60px; /* 移動端稍微減小堆積區域 */
+    }
+    
+    .piled-leaf {
+        transform: scale(0.8);
     }
 }
 

@@ -7,9 +7,13 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>溯42畢業紀念</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="styles.css?v=2.0">
 </head>
 <body>
+    <!-- 飄落落葉容器 -->
+    <div id="falling-leaves-container"></div>
+    
     <!-- 導航欄 -->
     <nav class="navbar">
         <div class="container">
@@ -134,13 +138,18 @@
         </div>
     </section>
 
-
-    <!-- 頁尾 -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 溯42畢業紀念網站. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <!-- 頁尾容器（包含堆積落葉和頁尾） -->
+    <div style="position: relative; margin-bottom: 0; padding-bottom: 0;">
+        <!-- 堆積落葉容器（在頁尾上方） -->
+        <div id="piled-leaves-container"></div>
+        
+        <!-- 頁尾 -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2025 溯42畢業紀念網站. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
 
     <!-- 圖片預覽模態框 -->
     <div id="imageModal" class="modal">
@@ -152,6 +161,7 @@
     <script src="timer-script.js?v=2.0"></script>
     <script src="script.js?v=2.0"></script>
     <script src="music-player.js?v=2.0"></script>
+    <script src="falling-leaves.js?v=2.0"></script>
 </body>
 </html>
 

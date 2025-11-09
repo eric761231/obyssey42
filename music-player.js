@@ -63,6 +63,34 @@
             this.audio.addEventListener('error', (e) => {
                 console.error('音樂檔案載入失敗:', e);
                 console.error('音樂檔案路徑:', this.musicSrc);
+                if (this.audio.error) {
+                    console.error('錯誤代碼:', this.audio.error.code);
+                    console.error('錯誤訊息:', this.audio.error.message);
+                    
+                    // 錯誤代碼說明
+                    const errorMessages = {
+                        1: 'MEDIA_ERR_ABORTED - 用戶中止載入',
+                        2: 'MEDIA_ERR_NETWORK - 網路錯誤',
+                        3: 'MEDIA_ERR_DECODE - 解碼錯誤',
+                        4: 'MEDIA_ERR_SRC_NOT_SUPPORTED - 不支援的格式或來源'
+                    };
+                    console.error('錯誤說明:', errorMessages[this.audio.error.code] || '未知錯誤');
+                    
+                    // Google Drive 特殊處理
+                    if (this.musicSrc.includes('drive.google.com')) {
+                        console.error('');
+                        console.error('⚠️ Google Drive 載入失敗的可能原因：');
+                        console.error('1. 檔案太大（>100MB），Google Drive 會顯示病毒掃描警告頁面');
+                        console.error('2. 檔案權限未設為公開（需要「知道連結的使用者」可檢視）');
+                        console.error('3. CORS 跨域限制');
+                        console.error('');
+                        console.error('💡 解決方案：');
+                        console.error('1. 使用 Dropbox（推薦）- 更適合大檔案');
+                        console.error('2. 使用其他 CDN 服務（Cloudinary、AWS S3 等）');
+                        console.error('3. 將檔案壓縮後再上傳到 Google Drive');
+                        console.error('4. 或將檔案上傳到 Netlify 的 public 資料夾');
+                    }
+                }
             });
 
             // 音頻事件監聽
@@ -217,30 +245,16 @@
     window.MusicPlayer = MusicPlayer;
 
     // 當 DOM 載入完成後初始化
-    // 使用相對於根目錄的路徑
-    function getMusicPath() {
-        // 嘗試多種路徑格式
-        const basePath = window.location.pathname.replace(/\/[^/]*$/, '/');
-        const paths = [
-            'music/background-music.mp3',
-            './music/background-music.mp3',
-            basePath + 'music/background-music.mp3',
-            '/music/background-music.mp3'
-        ];
-        return paths[0]; // 預設使用相對路徑
-    }
+    // 音樂檔案 URL - 使用 Dropbox 直接下載連結
+    const MUSIC_URL = 'https://dl.dropboxusercontent.com/scl/fi/30dtk8vbul5rosz8gmc5e/background-music.mp3?rlkey=tn0f0pjo8pllustvomh5eljj5&st=pccig5v3&dl=1';
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            const musicSrc = getMusicPath();
-            console.log('初始化音樂播放器，音樂檔案:', musicSrc);
-            console.log('當前頁面路徑:', window.location.pathname);
-            MusicPlayer.init(musicSrc);
+            console.log('初始化音樂播放器，音樂檔案:', MUSIC_URL);
+            MusicPlayer.init(MUSIC_URL);
         });
     } else {
-        const musicSrc = getMusicPath();
-        console.log('初始化音樂播放器，音樂檔案:', musicSrc);
-        console.log('當前頁面路徑:', window.location.pathname);
-        MusicPlayer.init(musicSrc);
+        console.log('初始化音樂播放器，音樂檔案:', MUSIC_URL);
+        MusicPlayer.init(MUSIC_URL);
     }
 })();
