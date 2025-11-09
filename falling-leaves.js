@@ -174,7 +174,7 @@
         console.log('落葉創建完成，共', container.children.length, '片');
     }
 
-    // 初始化堆積落葉效果（創建厚厚的落葉堆）
+    // 初始化堆積落葉效果（創建厚厚的落葉堆）- 優化版本
     function initPiledLeaves() {
         const container = document.getElementById('piled-leaves-container');
         if (!container) {
@@ -186,12 +186,12 @@
         const pileCount = 7500; // 增加15倍數量（500 * 15 = 7500）以形成厚厚一層
         console.log('開始創建堆積落葉，數量:', pileCount);
 
-        // 使用 IntersectionObserver 實現懶載入
-        const observer = new IntersectionObserver((entries) => {
+        // 使用 IntersectionObserver 實現懶載入圖片
+        const imageObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     loadLeafImage(entry.target);
-                    observer.unobserve(entry.target);
+                    imageObserver.unobserve(entry.target);
                 }
             });
         }, {
@@ -200,13 +200,65 @@
             threshold: 0.01
         });
 
-        for (let i = 0; i < pileCount; i++) {
-            const leaf = createPileLeaf();
-            container.appendChild(leaf);
-            observer.observe(leaf);
+        // 優化：使用 DocumentFragment 批量添加，減少重排
+        const batchSize = 100; // 每批創建 100 片
+        let currentIndex = 0;
+        let isCreating = false; // 防止重複創建
+
+        // 分批創建落葉，使用 requestAnimationFrame 避免阻塞主線程
+        function createBatch() {
+            if (isCreating) return; // 如果正在創建，跳過
+            isCreating = true;
+
+            const endIndex = Math.min(currentIndex + batchSize, pileCount);
+            const fragment = document.createDocumentFragment(); // 每批創建新的 fragment
+            
+            for (let i = currentIndex; i < endIndex; i++) {
+                const leaf = createPileLeaf();
+                fragment.appendChild(leaf);
+                imageObserver.observe(leaf);
+            }
+            
+            // 批量添加到 DOM
+            container.appendChild(fragment);
+            
+            currentIndex = endIndex;
+            isCreating = false;
+            
+            if (currentIndex < pileCount) {
+                // 繼續下一批，使用 requestAnimationFrame 讓瀏覽器有機會渲染
+                requestAnimationFrame(createBatch);
+            } else {
+                console.log('堆積落葉創建完成，共', container.children.length, '片');
+            }
         }
+
+        // 延遲載入：只在頁面接近底部時才開始創建堆積落葉
+        function checkAndStartLoading() {
+            const footer = document.querySelector('.footer');
+            if (!footer) {
+                // 如果找不到頁尾，直接開始創建
+                createBatch();
+                return;
+            }
+
+            const footerRect = footer.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // 如果頁尾在視窗內或接近視窗（提前 500px），開始創建堆積落葉
+            if (footerRect.top <= viewportHeight + 500) {
+                createBatch();
+                window.removeEventListener('scroll', checkAndStartLoading);
+                window.removeEventListener('resize', checkAndStartLoading);
+            }
+        }
+
+        // 初始檢查
+        checkAndStartLoading();
         
-        console.log('堆積落葉創建完成，共', container.children.length, '片');
+        // 監聽滾動和視窗大小變化
+        window.addEventListener('scroll', checkAndStartLoading, { passive: true });
+        window.addEventListener('resize', checkAndStartLoading, { passive: true });
     }
 
     // 當 DOM 載入完成後初始化
