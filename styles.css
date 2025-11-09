@@ -61,7 +61,7 @@ body {
 }
 
 .nav-brand {
-    font-size: 1.5rem;
+    font-size: 3rem;
     font-weight: bold;
     color: var(--primary-color);
     letter-spacing: 2px;
@@ -74,6 +74,7 @@ body {
 }
 
 .nav-menu a {
+    font-size: 2rem;
     text-decoration: none;
     color: var(--text-color);
     font-weight: 500;
@@ -793,7 +794,7 @@ body {
     }
 
     .nav-brand {
-        font-size: 1.2rem;
+        font-size: 2.4rem;
         margin-bottom: 0.5rem;
     }
 
@@ -805,7 +806,7 @@ body {
     }
 
     .nav-menu a {
-        font-size: 0.9rem;
+        font-size: 1.8rem;
     }
 
     .hero-title {
@@ -901,7 +902,7 @@ body {
 
 @media (max-width: 480px) {
     .nav-brand {
-        font-size: 1rem;
+        font-size: 2rem;
     }
 
     .nav-menu {
@@ -909,7 +910,7 @@ body {
     }
 
     .nav-menu a {
-        font-size: 0.8rem;
+        font-size: 1.6rem;
         padding: 0.3rem 0.5rem;
     }
 
