@@ -6,151 +6,319 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>溯42畢業紀念</title>
+    <title>溯42畢業紀念 - 前導頁</title>
     <link rel="stylesheet" href="styles.css?v=2.0">
+    <style>
+        .intro-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 背景圖片翻頁容器 */
+        .intro-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-size: 56%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 1;
+        }
+
+        /* 最終背景圖層（home.html的背景） */
+        .intro-background-final {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image: url('images/hero-background.jpg');
+            background-size: 56%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .intro-background-final.show {
+            opacity: 1;
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 20px;
+        }
+
+        .intro-title-large {
+            font-size: 8rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            margin-top: -5rem;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            animation: titleFadeIn 2.5s ease-out forwards;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            position: relative;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-image: inherit;
+        }
+
+        @keyframes titleFadeIn {
+            0% {
+                opacity: 1;
+                color: transparent;
+                -webkit-text-fill-color: transparent;
+                background-image: inherit;
+                background-clip: text;
+                -webkit-background-clip: text;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                transform: translateY(30px) scale(0.9) rotateX(20deg);
+            }
+            30% {
+                opacity: 1;
+                color: transparent;
+                -webkit-text-fill-color: transparent;
+                background-image: inherit;
+                background-clip: text;
+                -webkit-background-clip: text;
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+                transform: translateY(20px) scale(0.92) rotateX(15deg);
+            }
+            60% {
+                opacity: 1;
+                color: transparent;
+                -webkit-text-fill-color: transparent;
+                background-image: inherit;
+                background-clip: text;
+                -webkit-background-clip: text;
+                text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+                transform: translateY(10px) scale(0.96) rotateX(8deg);
+            }
+            80% {
+                opacity: 1;
+                color: rgba(255, 255, 255, 0.7);
+                -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
+                background-image: none;
+                text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+                transform: translateY(5px) scale(0.98) rotateX(4deg);
+            }
+            100% {
+                opacity: 1;
+                color: var(--white);
+                -webkit-text-fill-color: var(--white);
+                background-image: none;
+                text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+                transform: translateY(0) scale(1) rotateX(0deg);
+            }
+        }
+
+
+        .fade-out {
+            animation: fadeOut 1s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* 平板樣式 (768px - 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .intro-background,
+            .intro-background-final {
+                background-size: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .intro-title-large {
+                font-size: 4rem;
+                margin-top: -3rem;
+                margin-bottom: 2rem;
+                letter-spacing: 0.1em;
+            }
+
+            .intro-content {
+                padding: 0 15px;
+            }
+
+            .timer-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .timer-number {
+                font-size: 1.8rem;
+            }
+
+            .timer-item {
+                min-width: 55px;
+            }
+
+            .timer-separator {
+                font-size: 1.3rem;
+            }
+
+            .timer-label {
+                font-size: 0.85rem;
+            }
+
+            .slot-machine {
+                font-size: 1.8rem;
+                height: 2.5rem;
+            }
+
+            .slot-digit {
+                height: 2.5rem;
+            }
+
+            .slot-digit .digit-item {
+                height: 2.5rem;
+                line-height: 2.5rem;
+            }
+
+            .intro-background,
+            .intro-background-final {
+                background-size: 64%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-title-large {
+                font-size: 2.5rem;
+                margin-top: -2rem;
+                margin-bottom: 1.5rem;
+                letter-spacing: 0.05em;
+            }
+
+            .intro-content {
+                padding: 0 10px;
+            }
+
+            .timer-container {
+                padding: 1rem 0.8rem;
+            }
+
+            .timer-display {
+                gap: 0.3rem;
+                flex-wrap: wrap;
+            }
+
+            .timer-number {
+                font-size: 1.5rem;
+            }
+
+            .timer-item {
+                min-width: 45px;
+            }
+
+            .timer-unit {
+                font-size: 0.7rem;
+            }
+
+            .timer-separator {
+                font-size: 1rem;
+                margin: 0 0.05rem;
+            }
+
+            .timer-label {
+                font-size: 0.75rem;
+                padding: 0 10px;
+            }
+
+            .slot-machine {
+                font-size: 1.5rem;
+                height: 2rem;
+            }
+
+            .slot-digit {
+                height: 2rem;
+                width: 1em;
+            }
+
+            .slot-digit .digit-item {
+                height: 2rem;
+                line-height: 2rem;
+            }
+
+            .intro-background,
+            .intro-background-final {
+                background-size: 72%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 導航欄 -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">溯42</div>
-            <ul class="nav-menu">
-                <li><a href="#home">首頁</a></li>
-                <li><a href="#journey">我們的旅程</a></li>
-                <li><a href="#gallery">畢業同學</a></li>
-                <li><a href="#memories">畢業感言</a></li>
-                <li><a href="travel.html">旅行行程</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- 主視覺區域 -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">溯42</h1>
-            <div class="hero-description">
-                <p>溯源畢業才是人生溯源的開始</p>
-                <p class="hero-quote">一段深具影響力的旅程，我們一起走過</p>
-            </div>
-            <!-- 時間計時器 -->
+    <div class="intro-container" id="introContainer">
+        <!-- 背景圖片翻頁容器 -->
+        <div class="intro-background" id="introBackground"></div>
+        <!-- 最終背景圖層（home.html的背景） -->
+        <div class="intro-background-final" id="introBackgroundFinal"></div>
+        <div class="intro-content">
+            <!-- 溯42 標題 - 從透明背景渲染到白色字體 -->
+            <h1 class="intro-title-large" id="introTitle">溯42</h1>
+            <!-- 時間計時器 - 拉霸動畫效果 -->
             <div class="timer-container">
                 <p class="timer-label">課程從 2025/04/17 至今已經過了</p>
                 <div class="timer-display" id="timerDisplay">
                     <div class="timer-item">
-                        <span class="timer-number" id="days">0</span>
+                        <div class="slot-machine" id="days-slot">
+                            <div class="slot-digit" data-position="0"></div>
+                            <div class="slot-digit" data-position="1"></div>
+                            <div class="slot-digit" data-position="2"></div>
+                        </div>
                         <span class="timer-unit">天</span>
                     </div>
                     <div class="timer-separator">:</div>
                     <div class="timer-item">
-                        <span class="timer-number" id="hours">0</span>
+                        <div class="slot-machine" id="hours-slot">
+                            <div class="slot-digit" data-position="0"></div>
+                            <div class="slot-digit" data-position="1"></div>
+                        </div>
                         <span class="timer-unit">時</span>
                     </div>
                     <div class="timer-separator">:</div>
                     <div class="timer-item">
-                        <span class="timer-number" id="minutes">0</span>
+                        <div class="slot-machine" id="minutes-slot">
+                            <div class="slot-digit" data-position="0"></div>
+                            <div class="slot-digit" data-position="1"></div>
+                        </div>
                         <span class="timer-unit">分</span>
                     </div>
                     <div class="timer-separator">:</div>
                     <div class="timer-item">
-                        <span class="timer-number" id="seconds">0</span>
+                        <div class="slot-machine" id="seconds-slot">
+                            <div class="slot-digit" data-position="0"></div>
+                            <div class="slot-digit" data-position="1"></div>
+                        </div>
                         <span class="timer-unit">秒</span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="scroll-indicator">
-            <span>向下滾動</span>
-            <div class="arrow"></div>
-        </div>
-    </section>
-
-    <!-- 我們的旅程 -->
-    <section id="journey" class="about-section">
-        <div class="container">
-            <h2 class="section-title">我們的旅程</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="lead-text">
-                        溯源是一個整合型的深度工作坊，這是一個為期六個月的探索、蛻變之旅。我們一起培養與身、心、靈互動的和諧與平和，體驗接受每一個當下，放下抗拒，創造深遠而持久的轉換。
-                    </p>
-                    <p>
-                        我們著眼於內在，讓身體、情緒、思維達到平衡、和諧與合一。這不僅僅是一個課程，更是一段珍貴的成長歷程。
-                    </p>
-                </div>
-                <div class="about-features">
-                    <div class="feature-item">
-                        <h3>一個旅程而非一個目的地</h3>
-                        <p>我們一起追本溯源，更全方位地檢視關於信念和情緒的全貌。</p>
-                    </div>
-                    <div class="feature-item">
-                        <h3>與生命之流共同運轉</h3>
-                        <p>我們學習如何轉化、活在當下，並接受各個面向的自己。</p>
-                    </div>
-                    <div class="feature-item">
-                        <h3>探索古代戰士之道</h3>
-                        <p>我們解開了許多枷鎖，為自己創造了嶄新的人生！</p>
-                    </div>
-                    <div class="feature-item">
-                        <h3>接受事務的原貌</h3>
-                        <p>我們體驗接受每一個當下，放下抗拒，創造深遠而持久的轉換。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 畢業同學相框區域 -->
-    <section id="gallery" class="gallery-section">
-        <div class="container">
-            <h2 class="section-title">畢業同學</h2>
-            <p class="section-subtitle">第42班 · 21位勇敢的探索者</p>
-            <div class="photo-grid" id="photoGrid">
-                <!-- 21個相框將由 JavaScript 動態生成 -->
-            </div>
-        </div>
-    </section>
-
-    <!-- 畢業感言 -->
-    <section id="memories" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">畢業感言</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>感謝這段美好的旅程</h3>
-                    <p class="memories-text">
-                        六個月的時光轉瞬即逝，但我們收穫的成長與轉變將伴隨我們一生。
-                        感謝每一位同學的陪伴與支持，讓我們在溯源的路上不再孤單。
-                    </p>
-                    <p class="memories-text">
-                        這不是結束，而是新的開始。願我們帶著這份內在的平和與力量，
-                        繼續在人生的道路上勇敢前行，活出最真實的自己。
-                    </p>
-                    <div class="graduation-badge">
-                        <p class="badge-text">溯42</p>
-                        <p class="badge-subtext">陰陽合一，醒覺於萬物</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- 頁尾 -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 溯42畢業紀念網站. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <!-- 圖片預覽模態框 -->
-    <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-        <div id="caption"></div>
     </div>
 
-    <script src="timer-script.js?v=2.0"></script>
-    <script src="script.js?v=2.0"></script>
+    <script src="intro-script.js?v=2.0"></script>
+    <script src="music-player.js?v=2.0"></script>
 </body>
 </html>
 

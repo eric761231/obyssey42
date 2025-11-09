@@ -1,0 +1,16 @@
+# 音樂檔案（檔案太大，不納入版本控制）
+music/*.mp3
+music/*.wav
+music/*.ogg
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# 編輯器檔案
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+

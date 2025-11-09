@@ -572,6 +572,161 @@ body {
     padding: 2rem 0;
 }
 
+/* 音樂播放器 */
+#musicPlayerContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.music-player {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 18px;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.music-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.music-toggle-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.music-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.music-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.music-icon {
+    display: inline-block;
+    line-height: 1;
+}
+
+.music-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.music-volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #ddd;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.music-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.music-volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.music-volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.music-volume-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+.music-volume-icon {
+    font-size: 18px;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    #musicPlayerContainer {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .music-player {
+        padding: 10px 15px;
+        gap: 12px;
+    }
+
+    .music-toggle-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .music-volume-slider {
+        width: 60px;
+    }
+
+    .music-volume-icon {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #musicPlayerContainer {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .music-player {
+        padding: 8px 12px;
+        gap: 10px;
+    }
+
+    .music-toggle-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .music-volume-slider {
+        width: 50px;
+    }
+}
+
 /* 模態框 */
 .modal {
     display: none;
