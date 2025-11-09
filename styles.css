@@ -578,11 +578,11 @@ body {
     background: var(--primary-color);
     color: var(--white);
     text-align: center;
-    padding: 2rem 0;
+    padding: 1rem 0; /* 減少上下 padding */
     position: relative;
     z-index: 2; /* 確保在堆積落葉之上 */
     margin-bottom: 0 !important; /* 移除底部空白 */
-    padding-bottom: 2rem;
+    margin-top: 80px; /* 往下移動，為堆積落葉留出空間 */
 }
 
 /* 確保頁尾容器沒有額外空白 */
@@ -1083,39 +1083,63 @@ footer.footer * {
 }
 
 /* 合併的飄落、左右飄動和旋轉動畫 */
+/* 落葉在移動到 margin-top: 80px 區域的中間位置時開始淡出 */
 @keyframes fallAndSwayAndRotate {
     0% {
         transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 1;
     }
     10% {
         transform: translateY(10vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(36deg);
+        opacity: 1;
     }
     20% {
         transform: translateY(20vh) translateX(calc(var(--sway-amount, 30px) * -0.2)) rotate(72deg);
+        opacity: 1;
     }
     30% {
         transform: translateY(30vh) translateX(calc(var(--sway-amount, 30px) * 0.4)) rotate(108deg);
+        opacity: 1;
     }
     40% {
         transform: translateY(40vh) translateX(calc(var(--sway-amount, 30px) * -0.3)) rotate(144deg);
+        opacity: 1;
     }
     50% {
         transform: translateY(50vh) translateX(calc(var(--sway-amount, 30px) * 0.2)) rotate(180deg);
+        opacity: 1;
     }
     60% {
         transform: translateY(60vh) translateX(calc(var(--sway-amount, 30px) * -0.4)) rotate(216deg);
+        opacity: 1;
     }
     70% {
         transform: translateY(70vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(252deg);
+        opacity: 1;
     }
     80% {
         transform: translateY(80vh) translateX(calc(var(--sway-amount, 30px) * -0.2)) rotate(288deg);
+        opacity: 1;
+    }
+    85% {
+        /* 開始接近消失位置，保持往下移動 */
+        transform: translateY(calc(var(--disappear-position, 92vh) * 0.85)) translateX(calc(var(--sway-amount, 30px) * 0.1)) rotate(306deg);
+        opacity: 1;
     }
     90% {
-        transform: translateY(90vh) translateX(calc(var(--sway-amount, 30px) * 0.3)) rotate(324deg);
+        /* ========== 落葉消失位置 ========== */
+        /* 到達 margin-top: 80px 區域的中間位置（頁尾下方 40px） */
+        /* --disappear-position 由 JavaScript 動態計算，對應頁尾下方 40px 的位置 */
+        transform: translateY(calc(var(--disappear-position, 92vh) * 0.9)) translateX(calc(var(--sway-amount, 30px) * 0.05)) rotate(324deg);
+        opacity: 1; /* 到達消失位置前仍保持可見 */
+    }
+    90.01% {
+        /* 瞬間消失：在到達消失位置後立即設為透明 */
+        opacity: 0;
     }
     100% {
-        transform: translateY(calc(100vh + 50px)) translateX(calc(var(--sway-amount, 30px) * 0.1)) rotate(360deg);
+        transform: translateY(var(--disappear-position, 92vh)) translateX(0) rotate(360deg);
+        opacity: 0; /* 保持消失狀態 */
     }
 }
 
@@ -1125,7 +1149,7 @@ footer.footer * {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100px; /* 增加堆積區域高度，形成厚厚一層 */
+    height: 80px; /* 減少堆積區域高度 */
     pointer-events: none;
     z-index: 1; /* 在頁尾下方 */
     overflow: visible; /* 允許落葉稍微超出容器 */

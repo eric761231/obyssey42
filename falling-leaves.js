@@ -14,10 +14,11 @@
             'images/leaves/leaf06.png'
         ], // 落葉圖片路徑
         sizes: [30, 35, 40, 45, 50, 55, 60], // 落葉大小（px）
-        fallDuration: [8, 12, 15, 18, 20], // 飄落時間（秒）
+        fallDuration: [25, 30, 35, 40, 45], // 飄落時間（秒）- 慢速
         swayAmount: [20, 30, 40, 50, 60] // 左右飄動幅度（px）
     };
 
+    // ========== 計算落葉消失位置 ==========
     // 計算頁尾位置（用於確定落葉消失的位置）
     function getFooterPosition() {
         const footer = document.querySelector('.footer');
@@ -27,12 +28,13 @@
         }
         
         const footerRect = footer.getBoundingClientRect();
-        const footerTop = footerRect.top;
-        const pileHeight = 100; // 堆積落葉高度
-        // 落葉在頁尾上方（堆積落葉區域中間）開始消失
-        // 調整為更接近頁尾的位置
-        return footerTop - (pileHeight * 0.3); // 在堆積區域的 30% 位置開始消失
+        const footerTop = footerRect.top; // 頁尾頂部位置（px）
+        const marginTop = 80; // 頁尾的 margin-top: 80px（堆積落葉區域高度）
+        // 落葉消失位置：在 margin-top: 80px 區域的中間位置（40px）
+        // 計算方式：頁尾頂部位置 + (marginTop * 0.5) = 頁尾上方 40px 的位置
+        return footerTop + (marginTop * 2.5); // 在 80px 區域的中間（40px）位置
     }
+    // ======================================
 
     // 創建單個落葉
     function createLeaf() {
@@ -46,7 +48,7 @@
         const swayAmount = LEAF_CONFIG.swayAmount[Math.floor(Math.random() * LEAF_CONFIG.swayAmount.length)];
         const startX = Math.random() * 100; // 起始位置（百分比）
         const delay = Math.random() * 5; // 延遲時間（秒）
-        const rotationSpeed = 3 + Math.random() * 4; // 旋轉速度（秒）
+        const rotationSpeed = 8 + Math.random() * 6; // 旋轉速度（秒）- 慢速旋轉
         
         // 設置樣式
         leaf.style.width = size + 'px';
@@ -61,10 +63,22 @@
         leaf.style.opacity = 0.7 + Math.random() * 0.3; // 透明度 0.7-1.0
         leaf.style.display = 'block'; // 確保顯示
         
+        // ========== 計算落葉消失位置 ==========
+        // 計算落葉在頁尾下方消失的位置
+        const footerTop = getFooterPosition(); // 取得消失位置的像素值（px）
+        const windowHeight = window.innerHeight; // 視窗高度（px）
+        // 將像素位置轉換為視窗高度的百分比（vh）
+        // 公式：消失位置 / 視窗高度 * 100 = 消失位置的 vh 值
+        const disappearPosition = (footerTop / windowHeight) * 100;
+        // 限制消失位置在合理範圍內（不超過 100vh）
+        const disappearVh = Math.max(50, Math.min(100, disappearPosition));
+        // ======================================
+        
         // 設置自定義屬性用於動畫
         leaf.style.setProperty('--sway-amount', swayAmount + 'px');
         leaf.style.setProperty('--fall-duration', fallDuration + 's');
         leaf.style.setProperty('--rotate-duration', rotationSpeed + 's');
+        leaf.style.setProperty('--disappear-position', disappearVh + 'vh'); // 落葉消失位置（vh單位），用於 CSS 動畫
         
         return leaf;
     }
