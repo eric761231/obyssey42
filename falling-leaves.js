@@ -54,7 +54,8 @@
         leaf.style.width = size + 'px';
         leaf.style.height = size + 'px';
         leaf.style.left = startX + '%';
-        leaf.style.backgroundImage = `url("${leafImage}")`;
+        // 懶載入：先不設置背景圖片，使用 data-src 屬性
+        leaf.setAttribute('data-src', leafImage);
         leaf.style.backgroundSize = 'contain';
         leaf.style.backgroundRepeat = 'no-repeat';
         leaf.style.backgroundPosition = 'center';
@@ -83,7 +84,7 @@
         return leaf;
     }
 
-    // 創建堆積的落葉
+        // 創建堆積的落葉
     function createPileLeaf() {
         const leaf = document.createElement('div');
         leaf.className = 'piled-leaf';
@@ -101,7 +102,8 @@
         leaf.style.height = size + 'px';
         leaf.style.left = left + '%';
         leaf.style.bottom = bottom + 'px';
-        leaf.style.backgroundImage = `url("${leafImage}")`;
+        // 懶載入：先不設置背景圖片，使用 data-src 屬性
+        leaf.setAttribute('data-src', leafImage);
         leaf.style.backgroundSize = 'contain';
         leaf.style.backgroundRepeat = 'no-repeat';
         leaf.style.backgroundPosition = 'center';
@@ -112,6 +114,22 @@
         leaf.style.filter = 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3))';
         
         return leaf;
+    }
+
+    // 懶載入落葉圖片
+    function loadLeafImage(leaf) {
+        const src = leaf.getAttribute('data-src');
+        if (!src) return;
+        
+        const img = new Image();
+        img.onload = () => {
+            leaf.style.backgroundImage = `url("${src}")`;
+            leaf.removeAttribute('data-src');
+        };
+        img.onerror = () => {
+            console.error('落葉圖片載入失敗:', src);
+        };
+        img.src = src;
     }
 
     // 初始化落葉效果
@@ -129,15 +147,21 @@
             const leaf = createLeaf();
             container.appendChild(leaf);
             
-            // 預載入圖片
-            const img = new Image();
-            img.src = leaf.style.backgroundImage.match(/url\(['"]?([^'"]+)['"]?\)/)?.[1] || '';
-            img.onload = () => {
-                console.log('落葉圖片載入成功:', img.src);
-            };
-            img.onerror = () => {
-                console.error('落葉圖片載入失敗:', img.src);
-            };
+            // 使用 IntersectionObserver 實現懶載入
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        loadLeafImage(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '50px', // 提前 50px 開始載入
+                threshold: 0.01
+            });
+            
+            observer.observe(leaf);
             
             // 當落葉飄到底部後，重新開始（持續循環）
             leaf.addEventListener('animationiteration', () => {
@@ -162,9 +186,24 @@
         const pileCount = 7500; // 增加15倍數量（500 * 15 = 7500）以形成厚厚一層
         console.log('開始創建堆積落葉，數量:', pileCount);
 
+        // 使用 IntersectionObserver 實現懶載入
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    loadLeafImage(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '100px', // 提前 100px 開始載入
+            threshold: 0.01
+        });
+
         for (let i = 0; i < pileCount; i++) {
             const leaf = createPileLeaf();
             container.appendChild(leaf);
+            observer.observe(leaf);
         }
         
         console.log('堆積落葉創建完成，共', container.children.length, '片');

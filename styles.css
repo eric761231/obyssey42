@@ -8,6 +8,9 @@ html {
     margin: 0;
     padding: 0;
     height: 100%;
+    width: 100%;
+    max-width: 100vw; /* 確保不超過視窗寬度 */
+    overflow-x: hidden;
 }
 
 :root {
@@ -28,6 +31,8 @@ body {
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: 100vw; /* 確保不超過視窗寬度 */
     /* 移動端優化：改善觸摸滾動性能 */
     -webkit-overflow-scrolling: touch;
     /* 移動端優化：防止文字選擇時的藍色高亮 */
@@ -41,6 +46,8 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box; /* 確保 padding 包含在寬度內 */
 }
 
 /* 導航欄 */
@@ -862,6 +869,10 @@ footer.footer * {
     .photo-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 1.2rem;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
     }
 
     .about-features {
@@ -962,6 +973,10 @@ footer.footer * {
     .photo-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8rem;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 5px;
+        box-sizing: border-box;
     }
 
     .photo-frame {
