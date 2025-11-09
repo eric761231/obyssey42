@@ -233,32 +233,18 @@
             }
         }
 
-        // 延遲載入：只在頁面接近底部時才開始創建堆積落葉
-        function checkAndStartLoading() {
-            const footer = document.querySelector('.footer');
-            if (!footer) {
-                // 如果找不到頁尾，直接開始創建
+        // 預載入：頁面載入後立即開始創建堆積落葉（分批載入以不阻塞主線程）
+        // 使用 requestIdleCallback 在瀏覽器空閒時開始創建，如果瀏覽器不支持則使用 setTimeout
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
                 createBatch();
-                return;
-            }
-
-            const footerRect = footer.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
-            
-            // 如果頁尾在視窗內或接近視窗（提前 500px），開始創建堆積落葉
-            if (footerRect.top <= viewportHeight + 500) {
+            }, { timeout: 1000 }); // 最多等待 1 秒
+        } else {
+            // 如果不支持 requestIdleCallback，使用 setTimeout 延遲一小段時間
+            setTimeout(() => {
                 createBatch();
-                window.removeEventListener('scroll', checkAndStartLoading);
-                window.removeEventListener('resize', checkAndStartLoading);
-            }
+            }, 100);
         }
-
-        // 初始檢查
-        checkAndStartLoading();
-        
-        // 監聽滾動和視窗大小變化
-        window.addEventListener('scroll', checkAndStartLoading, { passive: true });
-        window.addEventListener('resize', checkAndStartLoading, { passive: true });
     }
 
     // 當 DOM 載入完成後初始化
