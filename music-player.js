@@ -45,7 +45,11 @@
             this.audio.src = this.musicSrc;
             this.audio.loop = true;
             this.audio.volume = this.volume;
+            // 手機優化：使用 'auto' 預載入，確保音頻盡快載入
             this.audio.preload = 'auto';
+            // 手機優化：添加 playsinline 屬性（iOS Safari 需要）
+            this.audio.setAttribute('playsinline', '');
+            this.audio.setAttribute('webkit-playsinline', '');
             
             // 音頻載入成功
             this.audio.addEventListener('canplaythrough', () => {
@@ -142,48 +146,87 @@
                 this.saveState();
             });
 
-            // 處理用戶交互以觸發自動播放
-            const userInteractionEvents = ['click', 'touchstart', 'keydown', 'mousedown'];
-            const handleUserInteraction = () => {
+            // 處理用戶交互以觸發自動播放（手機優化版）
+            // 手機瀏覽器需要更積極的交互檢測
+            const userInteractionEvents = [
+                'click', 
+                'touchstart', 
+                'touchend',  // 添加 touchend
+                'touchmove',  // 添加 touchmove
+                'keydown', 
+                'mousedown',
+                'scroll',     // 添加滾動事件（手機上常見）
+                'pointerdown' // 添加指針事件（現代瀏覽器）
+            ];
+            
+            const handleUserInteraction = (event) => {
                 if (!this.hasUserInteracted) {
                     this.hasUserInteracted = true;
-                    console.log('檢測到用戶交互，嘗試播放音樂');
+                    console.log('檢測到用戶交互，嘗試播放音樂', event.type);
                     console.log('音頻狀態 - isLoaded:', this.isLoaded, 'isPlaying:', this.isPlaying, 'paused:', this.audio ? this.audio.paused : 'N/A');
                     
                     // 確保要播放
                     this.isPlaying = true;
                     
-                    // 確保音頻已載入
-                    if (this.isLoaded) {
-                        // 立即嘗試播放
-                        if (this.audio && this.audio.paused) {
-                            this.play().catch(err => {
-                                console.error('用戶交互後播放失敗:', err);
-                            });
-                        } else if (this.audio && !this.audio.paused) {
-                            console.log('音樂已經在播放中');
-                        }
-                    } else {
-                        // 如果還沒載入，等待載入完成
-                        console.log('等待音樂檔案載入完成...');
-                        this.audio.addEventListener('canplaythrough', () => {
-                            console.log('音樂載入完成，開始播放');
-                            if (this.audio && this.audio.paused) {
+                    // 立即嘗試播放（不等待載入完成）
+                    const tryPlay = () => {
+                        if (this.audio) {
+                            // 確保音頻已準備好
+                            if (this.audio.readyState >= 2) { // HAVE_CURRENT_DATA 或更高
                                 this.play().catch(err => {
-                                    console.error('載入完成後播放失敗:', err);
+                                    console.log('播放嘗試失敗，等待載入完成:', err.message);
+                                    // 如果失敗，等待載入完成後再試
+                                    if (!this.isLoaded) {
+                                        this.audio.addEventListener('canplaythrough', () => {
+                                            this.play().catch(e => {
+                                                console.error('載入完成後播放失敗:', e);
+                                            });
+                                        }, { once: true });
+                                    }
                                 });
+                            } else {
+                                // 音頻還沒準備好，等待載入
+                                console.log('音頻尚未準備好，等待載入...');
+                                this.audio.addEventListener('canplaythrough', () => {
+                                    console.log('音樂載入完成，開始播放');
+                                    this.play().catch(err => {
+                                        console.error('載入完成後播放失敗:', err);
+                                    });
+                                }, { once: true });
                             }
-                        }, { once: true });
+                        }
+                    };
+                    
+                    // 立即嘗試播放
+                    tryPlay();
+                } else {
+                    // 如果已經交互過，但音樂還沒播放，再次嘗試
+                    if (this.isPlaying && this.audio && this.audio.paused) {
+                        this.play().catch(err => {
+                            console.log('再次播放嘗試失敗:', err.message);
+                        });
                     }
                 }
             };
 
-            // 監聽所有用戶交互事件
+            // 監聽所有用戶交互事件（使用 capture 階段以更早捕獲）
             userInteractionEvents.forEach(event => {
-                document.addEventListener(event, handleUserInteraction, { once: false, passive: true });
+                document.addEventListener(event, handleUserInteraction, { 
+                    once: false, 
+                    passive: true,
+                    capture: true  // 在捕獲階段監聽，更早觸發
+                });
+            });
+            
+            // 特別針對手機：監聽整個文檔的觸摸事件
+            document.body.addEventListener('touchstart', handleUserInteraction, { 
+                once: false, 
+                passive: true,
+                capture: true 
             });
 
             // 也嘗試自動播放（可能被瀏覽器阻止）
+            // 手機上可能需要更長的等待時間
             setTimeout(() => {
                 if (this.isPlaying && this.audio && !this.audio.paused) {
                     // 已經在播放
@@ -191,10 +234,24 @@
                 }
                 if (this.isLoaded && this.isPlaying) {
                     this.play().catch(err => {
-                        console.log('自動播放被阻止（這是正常的）:', err.message);
+                        console.log('自動播放被阻止（這是正常的，需要用戶交互）:', err.message);
                     });
                 }
             }, 500);
+            
+            // 手機優化：在頁面完全載入後再次嘗試
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    if (this.isPlaying && this.audio && this.audio.paused && this.isLoaded) {
+                        // 如果用戶已經交互過，再次嘗試播放
+                        if (this.hasUserInteracted) {
+                            this.play().catch(err => {
+                                console.log('頁面載入後播放嘗試失敗:', err.message);
+                            });
+                        }
+                    }
+                }, 1000);
+            });
         },
 
         // 播放
