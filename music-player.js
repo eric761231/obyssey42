@@ -50,6 +50,13 @@
             // 手機優化：添加 playsinline 屬性（iOS Safari 需要）
             this.audio.setAttribute('playsinline', '');
             this.audio.setAttribute('webkit-playsinline', '');
+            // 安卓優化：確保音頻元素可見（某些安卓瀏覽器需要）
+            this.audio.style.display = 'block';
+            this.audio.style.width = '1px';
+            this.audio.style.height = '1px';
+            this.audio.style.opacity = '0';
+            this.audio.style.position = 'absolute';
+            this.audio.style.pointerEvents = 'none';
             
             // 音頻載入成功
             this.audio.addEventListener('canplaythrough', () => {
@@ -164,35 +171,64 @@
                     this.hasUserInteracted = true;
                     console.log('檢測到用戶交互，嘗試播放音樂', event.type);
                     console.log('音頻狀態 - isLoaded:', this.isLoaded, 'isPlaying:', this.isPlaying, 'paused:', this.audio ? this.audio.paused : 'N/A');
+                    console.log('音頻 readyState:', this.audio ? this.audio.readyState : 'N/A');
                     
                     // 確保要播放
                     this.isPlaying = true;
                     
-                    // 立即嘗試播放（不等待載入完成）
+                    // 安卓優化：立即嘗試播放（不等待載入完成）
                     const tryPlay = () => {
                         if (this.audio) {
-                            // 確保音頻已準備好
-                            if (this.audio.readyState >= 2) { // HAVE_CURRENT_DATA 或更高
-                                this.play().catch(err => {
-                                    console.log('播放嘗試失敗，等待載入完成:', err.message);
+                            // 安卓瀏覽器可能需要音頻元素在 DOM 中才能播放
+                            if (!document.body.contains(this.audio)) {
+                                document.body.appendChild(this.audio);
+                            }
+                            
+                            // 確保音量設置正確
+                            this.audio.volume = this.volume;
+                            
+                            // 立即嘗試播放（即使 readyState 較低）
+                            const playPromise = this.audio.play();
+                            
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    console.log('音樂播放成功！');
+                                    this.isPlaying = true;
+                                    this.saveState();
+                                }).catch(err => {
+                                    console.log('播放嘗試失敗:', err.message);
+                                    console.log('音頻 readyState:', this.audio.readyState);
+                                    
                                     // 如果失敗，等待載入完成後再試
-                                    if (!this.isLoaded) {
-                                        this.audio.addEventListener('canplaythrough', () => {
-                                            this.play().catch(e => {
+                                    if (this.audio.readyState < 2) {
+                                        console.log('等待音頻載入...');
+                                        const onCanPlay = () => {
+                                            console.log('音頻載入完成，再次嘗試播放');
+                                            this.audio.volume = this.volume;
+                                            this.audio.play().then(() => {
+                                                console.log('音樂播放成功！');
+                                                this.isPlaying = true;
+                                                this.saveState();
+                                            }).catch(e => {
                                                 console.error('載入完成後播放失敗:', e);
                                             });
-                                        }, { once: true });
+                                        };
+                                        
+                                        // 監聽多個載入事件
+                                        this.audio.addEventListener('canplay', onCanPlay, { once: true });
+                                        this.audio.addEventListener('canplaythrough', onCanPlay, { once: true });
+                                        this.audio.addEventListener('loadeddata', onCanPlay, { once: true });
+                                    } else {
+                                        // readyState >= 2，但播放失敗，可能是瀏覽器限制
+                                        console.log('音頻已載入但播放失敗，可能是瀏覽器限制');
+                                        // 延遲後再試一次
+                                        setTimeout(() => {
+                                            this.audio.play().catch(e => {
+                                                console.error('延遲播放失敗:', e);
+                                            });
+                                        }, 100);
                                     }
                                 });
-                            } else {
-                                // 音頻還沒準備好，等待載入
-                                console.log('音頻尚未準備好，等待載入...');
-                                this.audio.addEventListener('canplaythrough', () => {
-                                    console.log('音樂載入完成，開始播放');
-                                    this.play().catch(err => {
-                                        console.error('載入完成後播放失敗:', err);
-                                    });
-                                }, { once: true });
                             }
                         }
                     };
@@ -202,6 +238,8 @@
                 } else {
                     // 如果已經交互過，但音樂還沒播放，再次嘗試
                     if (this.isPlaying && this.audio && this.audio.paused) {
+                        console.log('用戶已交互，但音樂未播放，再次嘗試...');
+                        this.audio.volume = this.volume;
                         this.play().catch(err => {
                             console.log('再次播放嘗試失敗:', err.message);
                         });
@@ -261,15 +299,28 @@
                 return Promise.reject(new Error('音頻元素不存在'));
             }
             
+            // 安卓優化：確保音頻元素在 DOM 中
+            if (!document.body.contains(this.audio)) {
+                document.body.appendChild(this.audio);
+            }
+            
             // 確保音量設置正確
             this.audio.volume = this.volume;
+            
+            // 安卓優化：確保音頻已載入
+            if (this.audio.readyState === 0) {
+                // 如果音頻還沒開始載入，觸發載入
+                this.audio.load();
+            }
             
             return this.audio.play().then(() => {
                 this.isPlaying = true;
                 this.saveState();
-                console.log('音樂播放成功，音量:', this.volume);
+                console.log('音樂播放成功，音量:', this.volume, 'readyState:', this.audio.readyState);
             }).catch((error) => {
                 console.error('播放失敗:', error);
+                console.error('音頻 readyState:', this.audio.readyState);
+                console.error('音頻 paused:', this.audio.paused);
                 this.isPlaying = false;
                 throw error;
             });
